@@ -12,19 +12,17 @@ class BottomNavigationBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: selectedIndex,
-      onTap: onItemTapped,
-      items: const [
-        BottomNavigationBarItem(
+    return NavigationBar(
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onItemTapped,
+      elevation: 10,
+      height: 100,
+      destinations: const [
+        NavigationDestination(
           icon: Icon(Icons.map),
           label: 'Map',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.article),
-          label: 'News',
-        ),
-        BottomNavigationBarItem(
+        NavigationDestination(
           icon: Icon(Icons.info),
           label: 'Information',
         ),

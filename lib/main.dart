@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'map/map_screen.dart';
-import 'news/news_screen.dart';
 import 'information/information_screen.dart';
 import 'bottom_navigation/bottom_navigation.dart';
 
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KIT_Map_and_News',
+      title: 'KIT-Maps',
       theme: ThemeData(useMaterial3: true),
       home: const HomeScreen(),
     );
@@ -33,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const MapScreen(),
-    const NewsScreen(),
     const InformationScreen(),
   ];
 
