@@ -1,4 +1,4 @@
-package com.example.kit_map_and_news
+package com.example.kit_map
 
 import io.flutter.embedding.android.FlutterActivity
 

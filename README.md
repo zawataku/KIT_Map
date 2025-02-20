@@ -1,4 +1,4 @@
-# kit_map_and_news
+# kit_map
 
 A new Flutter project.
 
