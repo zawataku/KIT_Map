@@ -1,6 +1,6 @@
 {
-    "name": "kit_map_and_news",
-    "short_name": "kit_map_and_news",
+    "name": "kit_map",
+    "short_name": "kit_map",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
