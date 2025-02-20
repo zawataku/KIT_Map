@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const CampusMapApp());
@@ -29,6 +31,10 @@ class PinData {
   num x, y;
   final String message;
   PinData(this.x, this.y, this.message);
+
+  factory PinData.fromJson(Map<String, dynamic> json) {
+    return PinData(json['x'], json['y'], json['message']);
+  }
 }
 
 class _CampusMapScreenState extends State<CampusMapScreen> {
@@ -37,6 +43,22 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
   double defaultWidth = 50.0;
   double defaultHeight = 50.0;
   double defFontSize = 20.0;
+
+  List<PinData> pinDataList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadPinData();
+  }
+
+  Future<void> loadPinData() async {
+    final String response = await rootBundle.loadString('assets/pin_data.json');
+    final data = await json.decode(response) as List;
+    setState(() {
+      pinDataList = data.map((json) => PinData.fromJson(json)).toList();
+    });
+  }
 
   double calcWidth() {
     return ((defaultWidth / scale) / 2);
@@ -64,15 +86,6 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
     );
   }
 
-  // ピンのリストを適当に生成
-  final List<PinData> pinDataList = [
-    PinData(80, 480, "左下の公園"),
-    PinData(130, 340, "左上の公園"),
-    PinData(190, 480, "橋"),
-    PinData(280, 390, "駅"),
-    PinData(320, 370, "駅の近くの公園"),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,8 +93,7 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
       constrained: true,
       panEnabled: true,
       scaleEnabled: true,
-      boundaryMargin: const EdgeInsets.all(100.0),
-      minScale: 1.2,
+      minScale: 1,
       maxScale: 2.0,
       onInteractionUpdate: (details) {
         setState(() {
