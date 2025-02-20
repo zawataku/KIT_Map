@@ -91,5 +91,5 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
   assets:
-    - assets/buildings.json
+    - assets/map_pin_shadow.png
     - assets/map_2024.png

@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:vector_math/vector_math_64.dart' as vector_math;
 
 void main() {
   runApp(const CampusMapApp());
@@ -28,130 +25,100 @@ class CampusMapScreen extends StatefulWidget {
   State<CampusMapScreen> createState() => _CampusMapScreenState();
 }
 
+class PinData {
+  num x, y;
+  final String message;
+  PinData(this.x, this.y, this.message);
+}
+
 class _CampusMapScreenState extends State<CampusMapScreen> {
-  List<Building> buildings = [];
-  final TransformationController _transformationController =
-      TransformationController();
+  final _transformationController = TransformationController();
+  double scale = 1.0;
+  double defaultWidth = 50.0;
+  double defaultHeight = 50.0;
+  double defFontSize = 20.0;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadBuildings();
+  double calcWidth() {
+    return ((defaultWidth / scale) / 2);
   }
 
-  Future<void> _loadBuildings() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/buildings.json');
-    final List<dynamic> jsonData = json.decode(jsonString);
-
-    setState(() {
-      buildings = jsonData.map((data) => Building.fromJson(data)).toList();
-    });
+  double calcHeight() {
+    return ((defaultHeight / scale));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('キャンパスマップ')),
-      body: Stack(
-        children: [
-          // 地図画像の表示
-          InteractiveViewer(
-            transformationController: _transformationController,
-            minScale: 1.3,
-            maxScale: 4.0,
-            child: Center(
-              child: Image.asset('assets/map_2024.png'),
-            ),
-          ),
-          // 読み込んだ建物を配置
-          ...buildings.map((building) {
-            return AnimatedBuilder(
-              animation: _transformationController,
-              builder: (context, child) {
-                final matrix = _transformationController.value;
-                final offset = matrix.transform(vector_math.Vector4(
-                    building.x.toDouble(), building.y.toDouble(), 0, 1));
-                return Positioned(
-                  left: offset.x,
-                  top: offset.y,
-                  child: GestureDetector(
-                    onTap: () => _showBuildingInfo(context, building),
-                    child: Icon(Icons.location_on,
-                        color: building.color, size: 40),
-                  ),
-                );
-              },
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  void _showBuildingInfo(BuildContext context, Building building) {
-    showModalBottomSheet(
+  void tapPin(String message) {
+    showDialog(
       context: context,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(building.name,
-                  style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 10),
-              Text(building.description),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('閉じる'),
-              ),
-            ],
-          ),
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("この場所は"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
         );
       },
     );
   }
-}
 
-// 建物データを管理するクラス
-class Building {
-  final String name;
-  final String description;
-  final int x;
-  final int y;
-  final Color color;
+  // ピンのリストを適当に生成
+  final List<PinData> pinDataList = [
+    PinData(80, 480, "左下の公園"),
+    PinData(130, 340, "左上の公園"),
+    PinData(190, 480, "橋"),
+    PinData(280, 390, "駅"),
+    PinData(320, 370, "駅の近くの公園"),
+  ];
 
-  Building({
-    required this.name,
-    required this.description,
-    required this.x,
-    required this.y,
-    required this.color,
-  });
-
-  factory Building.fromJson(Map<String, dynamic> json) {
-    return Building(
-      name: json['name'],
-      description: json['description'],
-      x: json['x'],
-      y: json['y'],
-      color: _colorFromString(json['color']),
-    );
-  }
-
-  static Color _colorFromString(String color) {
-    switch (color.toLowerCase()) {
-      case "red":
-        return Colors.red;
-      case "blue":
-        return Colors.blue;
-      case "green":
-        return Colors.green;
-      default:
-        return Colors.black;
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: InteractiveViewer(
+      constrained: true,
+      panEnabled: true,
+      scaleEnabled: true,
+      boundaryMargin: const EdgeInsets.all(100.0),
+      minScale: 1.2,
+      maxScale: 2.0,
+      onInteractionUpdate: (details) {
+        setState(() {
+          // データを更新
+          scale = _transformationController.value.getMaxScaleOnAxis();
+        });
+      },
+      transformationController: _transformationController,
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Image.asset(
+            "assets/map_2024.png",
+            fit: BoxFit.fitWidth,
+          ),
+          for (PinData pinData in pinDataList)
+            // 一定の scale よりも小さくなったら非表示にする
+            if (scale > 0.9)
+              // Positionedで配置
+              Positioned(
+                  // 座標を左上にすると、拡大縮小時にピンの位置がズレていくので、ピンの先端がズレないように固定
+                  left: pinData.x - calcWidth(),
+                  top: pinData.y - calcHeight(),
+                  // 画像の拡大率に合わせて、ピン画像のサイズを調整
+                  width: defaultWidth / scale,
+                  height: defaultHeight / scale,
+                  child: GestureDetector(
+                    child: Container(
+                      alignment: const Alignment(0.0, 0.0),
+                      child: Image.asset("assets/map_pin_shadow.png"),
+                    ),
+                    onTap: () {
+                      tapPin(pinData.message);
+                    },
+                  )),
+        ],
+      ),
+    ));
   }
 }
