@@ -1,16 +1,13 @@
-# kit_map
+# KIT_Map
 
-A new Flutter project.
+## 概要
+金沢工業大学の地図を表示するアプリ
 
-## Getting Started
+どこに何号館があるかわからなくなったときに便利
 
-This project is a starting point for a Flutter application.
+Powered by [Flutter](https://flutter.dev/)
 
-A few resources to get you started if this is your first Flutter project:
+## スクリーンショット
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+準備中
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
