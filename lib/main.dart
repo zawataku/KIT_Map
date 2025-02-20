@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:vector_math/vector_math_64.dart' as vector_math;
 
 void main() {
   runApp(const CampusMapApp());
@@ -29,6 +30,8 @@ class CampusMapScreen extends StatefulWidget {
 
 class _CampusMapScreenState extends State<CampusMapScreen> {
   List<Building> buildings = [];
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void initState() {
@@ -54,21 +57,31 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
         children: [
           // 地図画像の表示
           InteractiveViewer(
-            minScale: 1.0,
-            maxScale: 5.0,
+            transformationController: _transformationController,
+            minScale: 1.3,
+            maxScale: 4.0,
             child: Center(
               child: Image.asset('assets/map_2024.png'),
             ),
           ),
           // 読み込んだ建物を配置
           ...buildings.map((building) {
-            return Positioned(
-              left: building.x.toDouble(),
-              top: building.y.toDouble(),
-              child: GestureDetector(
-                onTap: () => _showBuildingInfo(context, building),
-                child: Icon(Icons.location_on, color: building.color, size: 40),
-              ),
+            return AnimatedBuilder(
+              animation: _transformationController,
+              builder: (context, child) {
+                final matrix = _transformationController.value;
+                final offset = matrix.transform(vector_math.Vector4(
+                    building.x.toDouble(), building.y.toDouble(), 0, 1));
+                return Positioned(
+                  left: offset.x,
+                  top: offset.y,
+                  child: GestureDetector(
+                    onTap: () => _showBuildingInfo(context, building),
+                    child: Icon(Icons.location_on,
+                        color: building.color, size: 40),
+                  ),
+                );
+              },
             );
           }),
         ],
