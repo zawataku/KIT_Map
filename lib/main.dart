@@ -13,7 +13,7 @@ class CampusMapApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Campus Map',
+      title: 'KIT Campus Map',
       theme: ThemeData(useMaterial3: true),
       home: const CampusMapScreen(),
     );
@@ -33,7 +33,7 @@ class PinData {
   PinData(this.x, this.y, this.message);
 
   factory PinData.fromJson(Map<String, dynamic> json) {
-    return PinData(json['x'], json['y'], json['message']);
+    return PinData(json['x'], json['y'], json['name']);
   }
 }
 
@@ -69,20 +69,45 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
   }
 
   void tapPin(String message) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text("この場所は"),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        );
-      },
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(30),
+      )),
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.4,
+          maxChildSize: 0.9,
+          minChildSize: 0.32,
+          expand: false,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      message,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "ここには詳細情報が入ります。",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
 
