@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kit_map/widgets/campus_map_screen.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp, //上向きを許可
+  ]);
   runApp(const CampusMapApp());
 }
 
