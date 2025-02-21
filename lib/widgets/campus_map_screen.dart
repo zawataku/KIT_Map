@@ -109,22 +109,27 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
             fit: BoxFit.fitWidth,
           ),
           for (PinData pinData in pinDataList)
-            // 一定の scale よりも小さくなったら非表示にする
-            if (scale > 0.9)
-              // Positionedで配置
-              Positioned(
-                  // 座標を左上にすると、拡大縮小時にピンの位置がズレていくので、ピンの先端がズレないように固定
-                  left: pinData.x - calcWidth(),
-                  top: pinData.y - calcHeight(),
-                  // 画像の拡大率に合わせて、ピン画像のサイズを調整
-                  width: defaultWidth / scale,
-                  height: defaultHeight / scale,
-                  child: GestureDetector(
-                    child: PinWidget(pinData: pinData),
-                    onTap: () {
-                      tapPin(pinData.message);
-                    },
-                  )),
+            // 一定の scale よりも小さくなったら小さなピン画像に切り替える
+            Positioned(
+              // 座標を左上にすると、拡大縮小時にピンの位置がズレていくので、ピンの先端がズレないように固定
+              left: pinData.x - calcWidth(),
+              top: pinData.y - calcHeight(),
+              // 画像の拡大率に合わせて、ピン画像のサイズを調整
+              width: defaultWidth / scale,
+              height: defaultHeight / scale,
+              child: GestureDetector(
+                child: scale > 1.4
+                    ? PinWidget(pinData: pinData)
+                    : Image.asset(
+                        "assets/map_pin_small.png",
+                        width: 10.0,
+                        height: 10.0,
+                      ),
+                onTap: () {
+                  tapPin(pinData.message);
+                },
+              ),
+            ),
         ],
       ),
     ));
