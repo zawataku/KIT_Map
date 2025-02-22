@@ -8,7 +8,12 @@ class CampusMapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("キャンパスマップ")),
+      appBar: AppBar(
+        title: const Text("Campus Map（扇が丘キャンパス）",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            )),
+      ),
       body: FlutterMap(
         options: MapOptions(
           initialCenter: const LatLng(36.530408, 136.627638),
@@ -21,6 +26,8 @@ class CampusMapPage extends StatelessWidget {
               const LatLng(36.526298, 136.624726),
             ),
           ),
+          interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag),
         ),
         children: [
           TileLayer(

@@ -10,9 +10,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Campus Map',
-      home: CampusMapPage(),
+    return MaterialApp(
+      title: 'KIT Campus Map',
+      home: const CampusMapPage(),
+      theme: ThemeData(
+        fontFamily: "M_PLUS_Rounded_1c",
+      ),
     );
   }
 }
