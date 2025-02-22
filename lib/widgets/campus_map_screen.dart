@@ -19,8 +19,8 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
   double defFontSize = 20.0;
   double imageWidth = 0;
   double imageHeight = 0;
-  double gridWidth = 80; // グリッドの幅
-  double gridHeight = 120; // グリッドの高さ
+  final double mapPixelWidth = 1024; // 画像の横幅 (ピクセル)
+  final double mapPixelHeight = 768; // 画像の縦幅 (ピクセル)
 
   List<PinData> pinDataList = [];
   TextEditingController searchController = TextEditingController();
@@ -64,11 +64,16 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
   }
 
   double calcLeft(double x) {
-    return (x / gridWidth) * imageWidth - calcWidth();
+    // 画像の横幅を基準にスケーリングして配置
+    final double scaledX = (x / mapPixelWidth) * imageWidth;
+    return scaledX - (defaultWidth / scale) / 2;
   }
 
   double calcTop(double y) {
-    return (y / gridHeight) * imageHeight - calcHeight();
+    // 画像の縦幅を基準にスケーリングして配置
+    // imageHeight は実際の画面上の表示高さ (BoxFit.fitWidth 時はアスペクト比に依存)
+    final double scaledY = (y / mapPixelHeight) * imageHeight;
+    return scaledY - (defaultHeight / scale);
   }
 
   void tapPin(String message) {
@@ -146,8 +151,10 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
         transformationController: _transformationController,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            imageWidth = constraints.maxWidth;
+            // 縦幅いっぱいに表示
             imageHeight = constraints.maxHeight;
+            imageWidth = imageHeight * (mapPixelWidth / mapPixelHeight);
+
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
@@ -155,23 +162,12 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
                   "assets/map_2024.png",
                   fit: BoxFit.fitHeight,
                 ),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return CustomPaint(
-                      size: Size(constraints.maxWidth, constraints.maxHeight),
-                      // painter: GridPainter(gridWidth, gridHeight),
-                    );
-                  },
-                ),
                 for (PinData pinData in filteredPinDataList.isEmpty
                     ? pinDataList
                     : filteredPinDataList)
-                  // 一定の scale よりも小さくなったら小さなピン画像に切り替える
                   Positioned(
-                    // 座標を左上にすると、拡大縮小時にピンの位置がズレていくので、ピンの先端がズレないように固定
                     left: calcLeft(pinData.x.toDouble()),
                     top: calcTop(pinData.y.toDouble()),
-                    // 画像の拡大率に合わせて、ピン画像のサイズを調整
                     width: defaultWidth / scale,
                     height: defaultHeight / scale,
                     child: GestureDetector(
@@ -195,30 +191,3 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
     );
   }
 }
-
-// class GridPainter extends CustomPainter {
-//   final double gridWidth;
-//   final double gridHeight;
-
-//   GridPainter(this.gridWidth, this.gridHeight);
-
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final paint = Paint()
-//       ..color = Colors.red.withOpacity(0.5)
-//       ..strokeWidth = 0.5;
-
-//     for (double i = 0; i <= size.width; i += size.width / gridWidth) {
-//       canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
-//     }
-
-//     for (double i = 0; i <= size.height; i += size.height / gridHeight) {
-//       canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
-//     }
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     return false;
-//   }
-// }
