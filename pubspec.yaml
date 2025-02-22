@@ -36,6 +36,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   vector_math: ^2.1.4
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
@@ -93,5 +95,46 @@ flutter:
   assets:
     - assets/map_pin_shadow.png
     - assets/map_pin_small.png
-    - assets/map_2024.png
     - assets/pin_data.json
+    - assets/tiles/17/115279/
+    - assets/tiles/17/115280/
+    - assets/tiles/17/115281/
+    - assets/tiles/17/115282/
+    - assets/tiles/18/230559/
+    - assets/tiles/18/230560/
+    - assets/tiles/18/230561/
+    - assets/tiles/18/230562/
+    - assets/tiles/18/230563/
+    - assets/tiles/18/230564/
+    - assets/tiles/19/461118/
+    - assets/tiles/19/461119/
+    - assets/tiles/19/461120/
+    - assets/tiles/19/461121/
+    - assets/tiles/19/461122/
+    - assets/tiles/19/461123/
+    - assets/tiles/19/461124/
+    - assets/tiles/19/461125/
+    - assets/tiles/19/461126/
+    - assets/tiles/19/461127/
+    - assets/tiles/19/461128/
+    - assets/tiles/20/922236/
+    - assets/tiles/20/922237/
+    - assets/tiles/20/922238/
+    - assets/tiles/20/922239/
+    - assets/tiles/20/922240/
+    - assets/tiles/20/922241/
+    - assets/tiles/20/922242/
+    - assets/tiles/20/922243/
+    - assets/tiles/20/922244/
+    - assets/tiles/20/922245/
+    - assets/tiles/20/922246/
+    - assets/tiles/20/922247/
+    - assets/tiles/20/922248/
+    - assets/tiles/20/922249/
+    - assets/tiles/20/922250/
+    - assets/tiles/20/922251/
+    - assets/tiles/20/922252/
+    - assets/tiles/20/922253/
+    - assets/tiles/20/922254/
+    - assets/tiles/20/922255/
+    - assets/tiles/20/922256/
